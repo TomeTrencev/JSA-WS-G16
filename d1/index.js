@@ -20,15 +20,15 @@ fileWrite('doc.txt', 'Document')
 
 const readFile = (file2) =>{
     return new Promise((succes,fail)=>{
-        fs.readFile(file2, 'utf8', (err, data)=>{
+        fs.readFile(file2, 'utf8', (data, err)=>{
             if(err) return(fail);
-            return succes();
+            return succes(data);
         });
     });
 } ;
 
-readFile("file2")
-.then(()=>{
+readFile("doc.txt")
+.then((data)=>{
     console.log("the file is read !");
 }).catch(err=>{
     console.log(err);
