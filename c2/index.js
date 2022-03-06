@@ -4,7 +4,7 @@ const express = require('express');
 const readData = (source) => {
     return new Promise((success, fail) => {
         fs.readFile(`${source}.json`, 'utf8', (err, data) => {
-            if(err) return fail(err);
+            if (err) return fail(err);
             let out = JSON.parse(data);
             return success(out);
         });
@@ -15,7 +15,7 @@ const writeData = (data, destination) => {
     return new Promise((success, fail) => {
         let out = JSON.stringify(data);
         fs.writeFile(`${destination}.json`, out, err => { // ./user.json
-            if(err) return fail(err);
+            if (err) return fail(err);
             return success();
         });
     });
@@ -30,37 +30,34 @@ const addPerson = async (firstName, lastName) => {
         let data = await readData('./data');
         data.push(person);
         await writeData(data, './data');
-    } catch(err) {
+    } catch (err) {
         throw err;
     }
 };
 
-const updatePerson = async(index,{ firstName, lastName}) =>{
-    let data = await readData('./data');
-
+const updatePerson = async (index, firstName, lastName) => {
     try {
-        let update = data.map((newPerson, index)=>{
-            if(newPerson.index===index){
-                return (index,{
-                    firstName,
-                    lastName,
-                });
-                  
+        let data = await readFile("./data");
+        let newData = data.map((person, i) => {
+            if (index === i) {
+                person = {
+                    firstName: firstName,
+                    lastName: lastName,
                 };
-                return newPerson;
-            });
-            await writeData('./data', update);
-    }     
-        catch (err) {
-           console.log(err);
-        }
-     };
+            }
+            return person;
+        });
+        writeFile(newData, "./data");
+    } catch (error) {
+        throw error;
+    }
+};
 const removePerson = async (index) => {
     try {
         let data = await readData('./data');
         let out = data.filter((_, i) => index !== i);
         await writeData(out, './data');
-    } catch(err) {
+    } catch (err) {
         throw err;
     }
 };
@@ -100,60 +97,55 @@ api.get('/users', async (req, res) => {
     try {
         let data = await readData('./data');
         res.status(200).send(data);
-    } catch(err) {
+    } catch (err) {
         console.log(err);
         res.status(500).send('Internal server error');
     }
 });
 
 api.post('/users', async (req, res) => {
-    const {first_name, last_name}= req.body;
+    const { first_name, last_name } = req.body;
 
-    if(!first_name || !last_name){
+    if (!first_name || !last_name) {
         return res.status(400).send("missing data!")
     }
     try {
-       await addPerson(first_name,last_name);
-       return res.status(201).send("Person is created");
+        await addPerson(first_name, last_name);
+        return res.status(201).send("Person is created");
     } catch (error) {
         console.log(err);
         return res.status(500).send('Person is not added');
     }
 });
 
-api.delete('/users/:index', async (req, res) => { // DELETE http://localhost:10000/users/3
-    const {index} = req.body;
-
-    if(!index){
+api.delete('/users/:index', async (req, res) => {
+    const index = Number(req.params.index);
+    console.log(req.params);
+    if (!index) {
         return res.status(400).send('missing data!');
     }
 
     try {
         await removePerson(index);
-       return res.status(200).send("Person is deleted")
+        return res.status(200).send("Person is deleted")
     } catch (error) {
         console.log(err);
         return res.status(500).send(err)
     }
 });
 
-api.put('/users/:index', async (req, res) => { // PUT http://localhost:10000/users/3
-    const index = req.params.index;
-    const{firstName, lastName}= req.body;
-
-    if(!firstName || !lastName){
-        return res.status(400).send("Missing data");
-    }
+api.put("/users/:index", async (req, res) => {
     try {
-        await updatePerson(index, {firstName,lastName});
-        return res.status(200).send("Person updated");
+        const index = Number(req.params.index);
+        await updatePerson(index, req.body.firstName, req.body.lastName);
+        return res.status(200).send("Person updated successfully");
     } catch (error) {
-        console.log(err);
-        res.status(500).send("Server error");
+        console.log(error);
+        return res.status(500).send("internal Server error");
     }
 });
 
 api.listen(10000, err => {
-    if(err) return console.log(err);
+    if (err) return console.log(err);
     console.log('Server successfully started on port 10000');
 });
