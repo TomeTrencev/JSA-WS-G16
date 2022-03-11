@@ -42,8 +42,9 @@ const update = async (req, res) => {
 
 const updatePartial = async (req, res) => {
     try {
-
-        return res.status(204).send('');
+         await footballers.updateOneFootballer(Number(req.params.id), req.body);
+         return res.status(204).send("")
+        
     } catch (err) {
         console.log(err)
         return res.status(500).send("Internal Server Error");

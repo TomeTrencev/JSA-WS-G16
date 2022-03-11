@@ -44,6 +44,25 @@ const updateFootballer = async (index, fudbaler) => {
     }
 };
 
+const updateOneFootballer = async (index, fudbaler) => {
+    try {
+        let data = await files.readData(DATA_SOURCE);
+        let out = data.map((c, i) => {
+            if (index === i) {
+                c = {
+                    ...c,
+                    ...fudbaler,
+
+                };
+            }
+            return c;
+        });
+        await files.writeData(out, DATA_SOURCE);
+    } catch (err) {
+        throw err;
+    }
+};
+
 
 const removeFootballer = async (index) => {
     try {
@@ -61,5 +80,6 @@ module.exports = {
     getOneFootballer,
     addFootballer,
     updateFootballer,
-    removeFootballer
+    removeFootballer,
+    updateOneFootballer
 }
