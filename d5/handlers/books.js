@@ -1,9 +1,9 @@
-const moviesMongo = require('../pkg/movies/');
-
+const books = require('../pkg/books');
+const validator = require('../pkg/books/validate');
 
 const getAll = async (req, res) => {
     try {
-        let cs = await moviesMongo.getAllMovies();
+        let cs = await books.getAllBooks();
         return res.status(200).send(cs);
     } catch (err) {
         console.log(err)
@@ -13,7 +13,7 @@ const getAll = async (req, res) => {
 
 const getOne = async (req, res) => {
     try {
-        let cs = await moviesMongo.getMovieByIndex((req.params.id));
+        let cs = await books.getOne(req.params.id);
         return res.status(200).send(cs);
     } catch (err) {
         console.log(err)
@@ -23,8 +23,9 @@ const getOne = async (req, res) => {
 
 const create = async (req, res) => {
     try {
-        await moviesMongo.addMovie(req.body);
-        return res.status(201).send(req.body);
+        await validator.validate(req.body, validator.Book);
+        let c = await books.addBook(req.body);
+        return res.status(201).send(c);
     } catch (err) {
         console.log(err)
         return res.status(500).send('Internal Server Error');
@@ -33,7 +34,8 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        await moviesMongo.updateMovie((req.params.id), req.body);
+        await validator.validate(req.body, validator.Book);
+        await books.updateBook(req.params.id, req.body);
         return res.status(204).send("");
     } catch (err) {
         console.log(err)
@@ -43,7 +45,8 @@ const update = async (req, res) => {
 
 const updatePartial = async (req, res) => {
     try {
-        await moviesMongo.updateMovie((req.params.id), req.body);
+        await validator.validate(req.body, validator.BookPartial);
+        await books.updateBook(req.params.id, req.body);
         return res.status(204).send("");
     } catch (err) {
         console.log(err)
@@ -53,7 +56,7 @@ const updatePartial = async (req, res) => {
 
 const remove = async (req, res) => {
     try {
-        await moviesMongo.removeMovie(req.params.id);
+        await books.removeBook(req.params.id);
         return res.status(204).send("");
     } catch (err) {
         console.log(err)
@@ -64,8 +67,8 @@ const remove = async (req, res) => {
 module.exports = {
     getAll,
     getOne,
-    create,
     update,
     updatePartial,
-    remove
+    remove,
+    create
 };

@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
+const config = require('../config')
 
-const host = ''
-const username = '';
-const password = '';
-const dbname = '';
+const host = config.get('db').host;
+const username = config.get('db').username;
+const password = config.get('db').password;;
+const dbname = config.get('db').dbname;;
 
 let DSN = `mongodb+srv://${username}:${password}@${host}/${dbname}?retryWrites=true&w=majority`;
 
@@ -14,5 +15,5 @@ mongoose.connect(
         if (err) {
             return console.log("Could not connet to DB:", err);
         }
-        console.log('Succesfully connected to DB');
+        console.log('Succesifulu connected to DB');
     });

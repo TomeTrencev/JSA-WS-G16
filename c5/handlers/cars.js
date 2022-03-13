@@ -1,9 +1,10 @@
-const moviesMongo = require('../pkg/movies/');
 
+const carsMongo = require('../pkg/cars/');
+const validator = require('../pkg/cars/validate')
 
 const getAll = async (req, res) => {
     try {
-        let cs = await moviesMongo.getAllMovies();
+        let cs = await carsMongo.getAllCars();
         return res.status(200).send(cs);
     } catch (err) {
         console.log(err)
@@ -13,7 +14,7 @@ const getAll = async (req, res) => {
 
 const getOne = async (req, res) => {
     try {
-        let cs = await moviesMongo.getMovieByIndex((req.params.id));
+        let cs = await carsMongo.getOne((req.params.id));
         return res.status(200).send(cs);
     } catch (err) {
         console.log(err)
@@ -23,7 +24,11 @@ const getOne = async (req, res) => {
 
 const create = async (req, res) => {
     try {
-        await moviesMongo.addMovie(req.body);
+        await validator.validate(req.body, validator.Car);
+        if(err){
+            throw err.errors;
+        }
+        await carsMongo.addCar(req.body);
         return res.status(201).send(req.body);
     } catch (err) {
         console.log(err)
@@ -33,7 +38,8 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        await moviesMongo.updateMovie((req.params.id), req.body);
+        await validator.validate(req.body, validator.Car);
+        await carsMongo.updateCar((req.params.id), req.body);
         return res.status(204).send("");
     } catch (err) {
         console.log(err)
@@ -43,7 +49,7 @@ const update = async (req, res) => {
 
 const updatePartial = async (req, res) => {
     try {
-        await moviesMongo.updateMovie((req.params.id), req.body);
+        await carsMongo.updateCar((req.params.id), req.body);
         return res.status(204).send("");
     } catch (err) {
         console.log(err)
@@ -53,7 +59,7 @@ const updatePartial = async (req, res) => {
 
 const remove = async (req, res) => {
     try {
-        await moviesMongo.removeMovie(req.params.id);
+        await carsMongo.removeCar((req.params.id));
         return res.status(204).send("");
     } catch (err) {
         console.log(err)

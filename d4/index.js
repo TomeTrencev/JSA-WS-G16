@@ -1,3 +1,4 @@
+
 require('./pkg/db')
 const express = require('express');
 const movies = require('./handlers/movies');
@@ -24,4 +25,3 @@ api.listen(10000, err => {
     if (err) return console.log(err);
     return console.log('Server started on port 10000');
 });
-
