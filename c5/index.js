@@ -1,5 +1,5 @@
-const config = require('./pkg/config')
-require('./pkg/db')
+const config = require('./pkg/config');
+require('./pkg/db');
 
 const express = require('express');
 const cars = require('./handlers/cars');
@@ -19,5 +19,3 @@ api.listen(config.get('service').port, err => {
     if(err) return console.log(err);
     return console.log(`Server started on port ${config.get('service').port}`);
 });
-
-

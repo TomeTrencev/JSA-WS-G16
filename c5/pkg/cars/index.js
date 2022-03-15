@@ -1,59 +1,34 @@
-const files = require('../files');
-const DATA_SOURCE = `${__dirname}/../../data`;
+const mongoose = require('mongoose');
 
-// of by one
+const Car = mongoose.model(
+    'cars',
+    {
+        model: String,
+        manufacturer: String,
+        year: Number
+    },
+    'cars'
+);
 
 const addCar = async (car) => {
-    try {
-        let data = await files.readData(DATA_SOURCE);
-        data.push(car);
-        await files.writeData(data, DATA_SOURCE);
-    } catch (err) {
-        throw err;
-    }
+    let c = new Car(car);
+    return await c.save();
 };
 
-const removeCar = async (index) => {
-    try {
-        let data = await files.readData(DATA_SOURCE);
-        let out = data.filter((_, i) => index !== i);
-        await files.writeData(out, DATA_SOURCE);
-    } catch (err) {
-        throw err;
-    }
+const removeCar = async (id) => {
+    return await Car.deleteOne({_id: id});
 };
 
-const updateCar = async (index, car) => {
-    try {
-        let data = await files.readData(DATA_SOURCE);
-        let out = data.map((c, i) => {
-            if (index !== i) {
-                c = car;
-            }
-            return c;
-        });
-        await files.writeData(out, DATA_SOURCE);
-    } catch (err) {
-        throw err;
-    }
+const updateCar = async (id, car) => {
+    return await Car.updateOne({_id: id}, car);
 };
 
 const getAllCars = async () => {
-    try {
-        let data = await files.readData(DATA_SOURCE);
-        return data;
-    } catch (err) {
-        throw err;
-    }
+    return await Car.find({});
 };
 
-const getCarByIndex = async (index) => {
-    try {
-        let data = await files.readData(DATA_SOURCE);
-        return data[index];
-    } catch (err) {
-        throw err;
-    }
+const getOne = async (id) => {
+    return await Car.findOne({_id: id});
 };
 
 module.exports = {
@@ -61,5 +36,5 @@ module.exports = {
     removeCar,
     updateCar,
     getAllCars,
-    getCarByIndex
+    getOne
 };
