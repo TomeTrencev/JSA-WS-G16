@@ -1,10 +1,10 @@
 const config = require('./pkg/config');
 const express = require('express');
-const weather = require('./handlers/weather');
+const forecast = require('./handlers/forecast');
 
 const api = express();
 
-api.get('/api/v1/weather/:city', weather.getForCity);
+api.get('/api/v1/forecast/:city', forecast.getForCity);
 
 api.listen(config.get('service').port, err => {
     if(err) return console.log(err);

@@ -41,24 +41,20 @@ const download = async (req, res) => {
 const listFiles = async (req, res) => {
     let userDir = `user_${req.user.id}`;
     let userDirPath = `${__dirname}/../uploads/${userDir}`;
-    fs.readdir((userDirPath, (err, files) => {
-        files.forEach(files => {
-            return res.send(files);
-        })
-    }));
+    let files = [];
+    files = fs.readdirSync(userDirPath);
+    return res.status(200).send(files);
 };
 
 const removeFile = async (req, res) => {
     let userDir = `user_${req.user.id}`;
     let userDirPath = `${__dirname}/../uploads/${userDir}`;
     let filePath = `${userDirPath}/${req.params.filename}`;
-    if (!fs.unlinkSync(filePath)) {
-        return res.status(404).send('Files not found');
-    }
-    res.status(200).send('File was deleted');
+    fs.unlinkSync(filePath)
+    return res.status(200).send('File is deleted');
 };
 
-//fs.unlinkSync(filepath)
+
 
 module.exports = {
     upload,
